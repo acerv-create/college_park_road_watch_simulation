@@ -1,0 +1,32 @@
+name: Hourly UMD Construction Scraper
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs every 60 minutes
+  workflow_dispatch:      # Manual run trigger
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Run Scraper
+        run: python scraper.py
+
+      - name: Commit updated JSON
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add notices.json
+          git commit -m "Auto-update live notices.json [skip ci]" || exit 0
+          git push
