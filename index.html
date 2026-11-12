@@ -250,24 +250,29 @@
 
     // Initialize Map and Layers on Page Load
     document.addEventListener('DOMContentLoaded', () => {
-      const collegeParkBounds = L.latLngBounds(
-        [38.9720, -76.9680], // Southwest corner
-        [39.0050, -76.9150]  // Northeast corner
-      );
+        const collegeParkBounds = L.latLngBounds(
+          [38.9720, -76.9680],
+          [39.0050, -76.9150]
+        );
 
-      map = L.map('map', {
-        center: [38.98715, -76.94345],
-        zoom: 15,
-        minZoom: 14,
-        maxZoom: 19,
-        maxBounds: collegeParkBounds,
-        maxBoundsViscosity: 1.0
-      });
+        map = L.map('map', {
+          center: [38.98715, -76.94345],
+          zoom: 15,
+          minZoom: 14,
+          maxZoom: 19,
+          maxBounds: collegeParkBounds,
+          maxBoundsViscosity: 1.0
+        });
 
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
+        // Explicitly enforce bounds and minZoom after initialization
+        map.setMinZoom(14);
+        map.setMaxBounds(collegeParkBounds);
+      
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          minZoom: 14,
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
       // Create Layer Groups
       osmFootpathGroup = L.layerGroup().addTo(map);
