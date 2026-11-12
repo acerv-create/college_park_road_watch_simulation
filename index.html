@@ -250,15 +250,20 @@
 
     // Initialize Map and Layers on Page Load
     document.addEventListener('DOMContentLoaded', () => {
-      // Create Leaflet Map centered on UMD
+      const collegeParkBounds = L.latLngBounds(
+        [38.9720, -76.9680], // Southwest corner
+        [39.0050, -76.9150]  // Northeast corner
+      );
+
       map = L.map('map', {
-        zoomControl: false
-      }).setView(CAMPUS_CENTER, 15);
+        center: [38.98715, -76.94345],
+        zoom: 15,
+        minZoom: 14,
+        maxZoom: 19,
+        maxBounds: collegeParkBounds,
+        maxBoundsViscosity: 1.0
+      });
 
-      // Add Zoom Control to Bottom-Right
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-      // Add Standard OpenStreetMap Tiles (Keyless, Zero Setup)
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
