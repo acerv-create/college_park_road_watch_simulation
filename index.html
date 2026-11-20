@@ -266,6 +266,46 @@
           maxBoundsViscosity: 1.0
         });
 
+        let routingControl = null;
+        let routeWaypoints = [];
+
+        function updateRoute(startLatLng, endLatLng, mode = 'foot') {
+          if (routingControl) {
+            map.removeControl(routingControl);
+          }
+  
+        // OSRM demo server supports 'driving' and 'foot' (walking)
+          const profile = mode === 'driving' ? 'driving' : 'foot';
+
+          routingControl = L.Routing.control({
+            waypoints: [
+              L.latLng(startLatLng),
+              L.latLng(endLatLng)
+            ],
+            router: L.Routing.osrmv1({
+              serviceUrl: `https://router.project-osrm.org/route/v1`,
+              profile: profile
+            }),
+            lineOptions: {
+              styles: [{ color: '#38bdf8', weight: 5, opacity: 0.85 }]
+            },
+            createMarker: function(i, wp) {
+              return L.marker(wp.latLng).bindPopup(i === 0 ? 'Start' : 'Destination');
+            },
+            addWaypoints: false,
+            routeWhileDragging: true
+          }).addTo(map);
+        }
+
+        // Allow users to click Start then Destination directly on the map
+        map.on('click', (e) => {
+          routeWaypoints.push(e.latlng);
+          if (routeWaypoints.length === 2) {
+            updateRoute(routeWaypoints[0], routeWaypoints[1], activeMode === 'driving' ? 'driving' : 'foot');
+            routeWaypoints = []; // Reset for next route
+          }
+        });
+
         // Explicitly enforce bounds and minZoom after initialization
         map.setMinZoom(14);
         map.setMaxBounds(collegeParkBounds);
