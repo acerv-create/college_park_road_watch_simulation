@@ -11,8 +11,6 @@
   <!-- Leaflet CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
   
   <!-- osmtogeojson Library for Overpass Footpath Parsing -->
   <script src="https://unpkg.com/osmtogeojson@3.0.0-beta.5/osmtogeojson.js"></script>
@@ -264,46 +262,6 @@
           maxZoom: 19,
           maxBounds: collegeParkBounds,
           maxBoundsViscosity: 1.0
-        });
-
-        let routingControl = null;
-        let routeWaypoints = [];
-
-        function updateRoute(startLatLng, endLatLng, mode = 'foot') {
-          if (routingControl) {
-            map.removeControl(routingControl);
-          }
-  
-        // OSRM demo server supports 'driving' and 'foot' (walking)
-          const profile = mode === 'driving' ? 'driving' : 'foot';
-
-          routingControl = L.Routing.control({
-            waypoints: [
-              L.latLng(startLatLng),
-              L.latLng(endLatLng)
-            ],
-            router: L.Routing.osrmv1({
-              serviceUrl: `https://router.project-osrm.org/route/v1`,
-              profile: profile
-            }),
-            lineOptions: {
-              styles: [{ color: '#38bdf8', weight: 5, opacity: 0.85 }]
-            },
-            createMarker: function(i, wp) {
-              return L.marker(wp.latLng).bindPopup(i === 0 ? 'Start' : 'Destination');
-            },
-            addWaypoints: false,
-            routeWhileDragging: true
-          }).addTo(map);
-        }
-
-        // Allow users to click Start then Destination directly on the map
-        map.on('click', (e) => {
-          routeWaypoints.push(e.latlng);
-          if (routeWaypoints.length === 2) {
-            updateRoute(routeWaypoints[0], routeWaypoints[1], activeMode === 'driving' ? 'driving' : 'foot');
-            routeWaypoints = []; // Reset for next route
-          }
         });
 
         // Explicitly enforce bounds and minZoom after initialization
